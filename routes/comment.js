@@ -9,6 +9,48 @@ const { createValidator } = require("express-joi-validation");
 const schema = require("../utils/validation");
 const validator = createValidator();
 
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     CommentPayload:
+ *       type: object
+ *       properties:
+ *         title:
+ *           type: string
+ *         comment:
+ *           type: string
+ *         personality:
+ *           type: array
+ *           items:
+ *             type: object
+ *         profileID:
+ *           type: string
+ *
+ */
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     CommentResponse:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *         title:
+ *           type: string
+ *         comment:
+ *           type: string
+ *         personality:
+ *           type: array
+ *           items:
+ *             type: object
+ *         profileID:
+ *           type: string
+ *
+ */
+
 module.exports = function () {
   router.get("/", validator.query(schema.getCommentSchema), async (req, res, next) => {
     const { filter, sort } = req.query;
@@ -53,6 +95,30 @@ module.exports = function () {
     }
   });
 
+  /**
+   * @openapi
+   * '/comment':
+   *  post:
+   *     tags:
+   *     - Comment
+   *     summary: create a new comment
+   *     requestBody:
+   *      required: true
+   *      content:
+   *        application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/CommentPayload'
+   *     responses:
+   *      201:
+   *        description: Success
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/CommentResponse'
+   *      500:
+   *        description: Internal server error
+   */
+
   router.post("/", validator.body(schema.createCommentSchema), async (req, res, next) => {
     const { comment, title, profileID, personality } = req.body;
     try {
@@ -72,6 +138,24 @@ module.exports = function () {
     }
   });
 
+  /**
+   * @openapi
+   * '/comment/like/{id}':
+   *  post:
+   *     tags:
+   *     - Comment
+   *     summary: Like a comment
+   *     parameters:
+   *      - name: id
+   *        in: path
+   *        description: The id of the comment
+   *        required: true
+   *     responses:
+   *      200:
+   *        description: Success
+   *      500:
+   *        description: Internal server error
+   */
   router.post("/like/:id", async (req, res, next) => {
     const id = req.params.id;
     try {

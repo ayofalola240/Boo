@@ -3,6 +3,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const ErrorHandler = require("./routes/error-handler");
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
 const app = express();
 
@@ -12,6 +14,34 @@ app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "10kb" }));
+
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "REST API Docs",
+    },
+    components: {
+      securitySchemas: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+  },
+
+  apis: ["./routes/*.js", "./schema/*.js"],
+};
+
+const swaggerSpec = swaggerJsdoc(options);
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // routes
 app.use("/profile", require("./routes/profile")());
