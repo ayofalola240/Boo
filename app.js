@@ -41,7 +41,7 @@ const options = {
 };
 
 const swaggerSpec = swaggerJsdoc(options);
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // routes
 app.use("/profile", require("./routes/profile")());
