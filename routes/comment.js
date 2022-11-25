@@ -43,15 +43,43 @@ const validator = createValidator();
  *         comment:
  *           type: string
  *         personality:
- *           type: array
- *           items:
- *             type: object
+ *           type: object
+ *         likes:
+ *           type: number
  *         profileID:
+ *           type: string
+ *         createdAt:
  *           type: string
  *
  */
 
 module.exports = function () {
+  /**
+   * @openapi
+   * '/comment':
+   *  get:
+   *     tags:
+   *     - Comment
+   *     summary: Get comments with filter and sort them
+   *     parameters:
+   *      - name: filter
+   *        in: query
+   *        description: Filter comment by personality
+   *      - name: sort
+   *        in: query
+   *        description: Sort comments by likes and creation time
+   *     responses:
+   *       200:
+   *         description: Success
+   *         content:
+   *          application/json:
+   *           schema:
+   *              type: array
+   *              items:
+   *                  $ref: '#/components/schemas/CommentResponse'
+   *       404:
+   *         description: Not found
+   */
   router.get("/", validator.query(schema.getCommentSchema), async (req, res, next) => {
     const { filter, sort } = req.query;
 
